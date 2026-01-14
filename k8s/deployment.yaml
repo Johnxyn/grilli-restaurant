@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grilli-deployment
+  namespace: grilli
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: grilli
+  template:
+    metadata:
+      labels:
+        app: grilli
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: grilli-container
+          image: johnxyn/grilli-master:v1
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
