@@ -25,6 +25,11 @@ jobs:
       - name: Push image
         run: docker push johnxyn/grilli-master:${{ github.sha }}
 
+      - name: Set up kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > $HOME/.kube/config
+
       - name: Update deployment image
         run: |
           kubectl set image deployment/grilli-deployment \
